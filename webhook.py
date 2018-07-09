@@ -197,7 +197,7 @@ def compare_keywords(req):
                    "SOAPI supports Credit, Debit and QR payment while NPS supports only QR payment."
 
     if "umapi" in keywords and "soapi" in keywords:
-        response = "Both SOAPI (stable) and UMAPI (legacy) fall under the category of eNETS Credit API" \
+        response = "Both SOAPI (stable) and UMAPI (legacy) fall under the category of eNETS Credit API. " \
                    "They differ entirely in their method of integration."
 
     return {
@@ -217,6 +217,35 @@ def compare_keywords(req):
     }
 
 
+def locate_resource(req):
+    query_result = req.get("queryResult")
+    parameters = query_result.get("parameters")
+    locate_item = parameters.get("locate_item")
+
+    s = open('location.txt', 'r').read()
+    location_dict = eval(s)
+
+    if locate_item in location_dict:
+        return {
+            "fulfillmentText": "Here you go.",
+            "fulfillmentMessages": [
+                {
+                    "platform": "ACTIONS_ON_GOOGLE",
+                    "linkOutSuggestion": {
+                        "destinationName": locate_item.upper(),
+                        "uri": location_dict[locate_item]
+                    }
+                }],
+            "source": "NETSBot"
+        }
+    else:
+        response = "Sorry we do not know where to find {}.".format(locate_item)
+        return {
+            "fulfillmentText": response,
+            "source": "NETSBot"
+        }
+
+
 def make_webhook_result(req):
     print(req["queryResult"]["action"])
     if req["queryResult"]["action"] == "find_error":
@@ -230,6 +259,9 @@ def make_webhook_result(req):
 
     if req["queryResult"]["action"] == "compare_keywords":
         return compare_keywords(req)
+
+    if req["queryResult"]["action"] == "locate_resource":
+        return locate_resource(req)
     #
     # if req["queryResult"]["action"] == "calculate_hmac":
     #     return calculate_hmac(req)
