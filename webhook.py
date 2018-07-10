@@ -155,11 +155,7 @@ def find_error(req):
 
 
 # def generate_signature(txn_req, secret_key):
-#     # print(secret_key)
-#     # print(txn_req)
-#     #
-#     # print(type(secret_key))
-#     # print(type(txn_req))
+#
 #     concat_payload_and_secret_key = bytes(txn_req + secret_key, 'utf-8')
 #     h = hashlib.sha256()
 #     h.update(concat_payload_and_secret_key)
